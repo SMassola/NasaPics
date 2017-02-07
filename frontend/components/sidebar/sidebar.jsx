@@ -1,9 +1,8 @@
 import React from 'react';
 
 import ImageContainer from '../images/image-container';
-import Sidebar from '../sidebar/sidebar';
 
-class Main extends React.Component {
+class Sidebar extends React.Component {
 
   constructor(props) {
     super(props);
@@ -12,11 +11,10 @@ class Main extends React.Component {
   render() {
     return (
       <div>
-        <Sidebar />
-        <ImageContainer />
+        sidebar
       </div>
     )
   }
 }
 
-export default Main;
+export default Sidebar;
