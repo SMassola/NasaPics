@@ -3,6 +3,7 @@
   margin: 0 auto;
   position: relative;
   padding: 5px 0;
+  max-width: 500px;
 }
 
 .photo {
