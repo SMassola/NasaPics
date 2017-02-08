@@ -18,4 +18,8 @@
 
 # Ignore application configuration
 /config/application.yml
-/config/secrets.yml
+
+node_modules
+
+bundle.js
+bundle.js.map
