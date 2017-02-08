@@ -6,14 +6,21 @@ class Header extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = {show: false}
     this._handleClick = this._handleClick.bind(this);
+    this._handleToggle = this._handleToggle.bind(this);
   }
 
   _handleClick(e) {
+    this.setState({show: false})
     let color = e.target.className.split(" ")[1];
     document.getElementsByClassName("image-container")[0].className = "image-container " + `${color}`;
     let searchParam = e.target.innerHTML === "All" ? "" : e.target.innerHTML;
     ImageActions.fetchImages({query: searchParam});
+  }
+
+  _handleToggle(e) {
+    this.setState({show: !this.state.show})
   }
 
   render() {
@@ -28,6 +35,17 @@ class Header extends React.Component {
             <div onClick={this._handleClick} className="filter light-blue">Space</div>
             <div onClick={this._handleClick} className="filter teal">Hubble</div>
             <div onClick={this._handleClick} className="filter red">NASA</div>
+          </div>
+        <div className="dropdown-container">
+          <img className="ham-icon" onClick={this._handleToggle}
+                  src="https://res.cloudinary.com/deeucxgdi/image/upload/c_scale,w_50/v1486543354/white-menu-icon_h4ixez.png" />
+          {this.state.show ?
+            <div className="dropdown-content">
+              <div onClick={this._handleClick} className="filter dark-blue">All</div>
+              <div onClick={this._handleClick} className="filter light-blue">Space</div>
+              <div onClick={this._handleClick} className="filter teal">Hubble</div>
+              <div onClick={this._handleClick} className="filter red">NASA</div>
+            </div> : ""}
           </div>
         </div>
       </div>

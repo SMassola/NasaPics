@@ -12363,17 +12363,25 @@ var Header = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
 
+    _this.state = { show: false };
     _this._handleClick = _this._handleClick.bind(_this);
+    _this._handleToggle = _this._handleToggle.bind(_this);
     return _this;
   }
 
   _createClass(Header, [{
     key: '_handleClick',
     value: function _handleClick(e) {
+      this.setState({ show: false });
       var color = e.target.className.split(" ")[1];
       document.getElementsByClassName("image-container")[0].className = "image-container " + ('' + color);
       var searchParam = e.target.innerHTML === "All" ? "" : e.target.innerHTML;
       _image_actions2.default.fetchImages({ query: searchParam });
+    }
+  }, {
+    key: '_handleToggle',
+    value: function _handleToggle(e) {
+      this.setState({ show: !this.state.show });
     }
   }, {
     key: 'render',
@@ -12412,6 +12420,36 @@ var Header = function (_React$Component) {
               { onClick: this._handleClick, className: 'filter red' },
               'NASA'
             )
+          ),
+          _react2.default.createElement(
+            'div',
+            { className: 'dropdown-container' },
+            _react2.default.createElement('img', { className: 'ham-icon', onClick: this._handleToggle,
+              src: 'https://res.cloudinary.com/deeucxgdi/image/upload/c_scale,w_50/v1486543354/white-menu-icon_h4ixez.png' }),
+            this.state.show ? _react2.default.createElement(
+              'div',
+              { className: 'dropdown-content' },
+              _react2.default.createElement(
+                'div',
+                { onClick: this._handleClick, className: 'filter dark-blue' },
+                'All'
+              ),
+              _react2.default.createElement(
+                'div',
+                { onClick: this._handleClick, className: 'filter light-blue' },
+                'Space'
+              ),
+              _react2.default.createElement(
+                'div',
+                { onClick: this._handleClick, className: 'filter teal' },
+                'Hubble'
+              ),
+              _react2.default.createElement(
+                'div',
+                { onClick: this._handleClick, className: 'filter red' },
+                'NASA'
+              )
+            ) : ""
           )
         )
       );
