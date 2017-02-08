@@ -24,7 +24,6 @@ function resetImages(images) {
     image.urlLarge = 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + image.id + '_' + image.secret + '_b.jpg';
     _images[image["id"]] = image;
   })
-  console.log(_images);
 }
 
 ImageStore.allImages = function() {

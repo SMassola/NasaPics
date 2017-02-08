@@ -15,7 +15,7 @@ class ImageContainer extends React.Component {
 
   componentDidMount() {
     this.imageListener = ImageStore.addListener(this._handleImages);
-    ImageActions.fetchImages();
+    ImageActions.fetchImages({query: ""});
   }
 
   componentWillUnmount() {
@@ -23,23 +23,20 @@ class ImageContainer extends React.Component {
   }
 
   _handleImages() {
-    this.setState({images: ImageStore.allImages()})
-    console.log(this.state.images);
+    this.setState({images: ImageStore.allImages()});
   }
 
   render() {
-    console.log(this.state.images);
     let images = this.state.images || []
-    return (
-      <div className="image-container">
-        Images
 
+    return (
+      <div className="image-container dark-blue">
         {images.map((image) => {
           return (
             <Image
               key={image.id}
               urlDefault={image.urlDefault}
-              />
+              title={image.title}/>
           )
         })
       }

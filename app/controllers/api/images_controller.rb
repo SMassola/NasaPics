@@ -7,6 +7,12 @@ class Api::ImagesController < ApplicationController
     images = JSON.load(res) || []
     @images = images["photos"]["photo"]
 
+    if params[:query] && !params[:query].empty?
+      @images = @images.select do |image|
+        image["title"].include?(params[:query])
+      end
+    end
+
     render :index
   end
 end

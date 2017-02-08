@@ -3,10 +3,13 @@ import ReactDOM from 'react-dom';
 import { hashHistory, Router, Route, IndexRoute } from 'react-router';
 import Main from './main/main';
 
+import Header from './header/header';
+
 class App extends React.Component {
   render() {
     return (
       <div>
+        <Header />
         {this.props.children}
       </div>
     );

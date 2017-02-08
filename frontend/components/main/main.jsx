@@ -11,8 +11,7 @@ class Main extends React.Component {
 
   render() {
     return (
-      <div>
-        <Sidebar />
+      <div className="main">
         <ImageContainer />
       </div>
     )

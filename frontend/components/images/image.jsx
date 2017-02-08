@@ -5,7 +5,9 @@ class Image extends React.Component {
   render() {
     return(
       <div className="image-item">
-        <img src={this.props.urlDefault} />
+        <img className="lazy" src={this.props.urlDefault}>
+        </img>
+        <div className="image-title">{this.props.title}</div>
       </div>
     );
   }

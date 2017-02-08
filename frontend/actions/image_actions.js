@@ -3,8 +3,8 @@ import ImageConstants from '../constants/image_constants';
 import AppDispatcher from '../dispatcher/dispatcher';
 
 module.exports = {
-  fetchImages() {
-    ImageApiUtil.fetchImages(this.receiveImages)
+  fetchImages(data={}) {
+    ImageApiUtil.fetchImages(data, this.receiveImages)
   },
 
   receiveImages(images) {

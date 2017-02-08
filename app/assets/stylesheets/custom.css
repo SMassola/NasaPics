@@ -1,0 +1,19 @@
+@import 'https://fonts.googleapis.com/css?family=Open+Sans';
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body, html, #root, .app {
+  min-height: 100vh;
+  font-family: 'Open Sans', sans-serif;
+}
+
+img {
+  max-width:90vw;
+  height:auto;
+  max-height: 80vh;
+  width: auto;
+}
