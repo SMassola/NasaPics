@@ -17,7 +17,7 @@ ImageStore.__onDispatch = function(payload) {
 };
 
 function resetImages(images) {
-  _images = {};
+  // _images = {};
 
   images["images"].forEach((image) => {
     image.urlDefault = 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + image.id + '_' + image.secret + '.jpg';

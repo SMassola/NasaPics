@@ -14,3 +14,5 @@
 //= require jquery_ujs
 //= require_tree .
 //= require lazyload.js
+//= require underscore.js
+//= require underscore

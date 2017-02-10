@@ -2,10 +2,8 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  color: white;
+  color: black;
   margin-top: 50px;
-  width: 768px;
-  /*min-width: 50%;*/
   transition: background-color 1s;
 }
 

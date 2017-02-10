@@ -8337,8 +8337,11 @@ var ImageContainer = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (ImageContainer.__proto__ || Object.getPrototypeOf(ImageContainer)).call(this, props));
 
-    _this.state = { images: [] };
+    _this.state = { images: [], counter: 1, flag: false };
     _this._handleImages = _this._handleImages.bind(_this);
+    _this._handleScroll = _this._handleScroll.bind(_this);
+    _this._newPage = _this._newPage.bind(_this);
+    _this._newPageCheck = _.throttle(_this._newPage.bind(_this), 1000, { trailing: true });
     return _this;
   }
 
@@ -8346,12 +8349,27 @@ var ImageContainer = function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.imageListener = _image_store2.default.addListener(this._handleImages);
-      _image_actions2.default.fetchImages({ query: "" });
+      _image_actions2.default.fetchImages({ query: "", counter: this.state.counter });
+      window.addEventListener('scroll', this._handleScroll);
     }
   }, {
     key: 'componentWillUnmount',
     value: function componentWillUnmount() {
-      this.friendListener.remove();
+      this.imageListener.remove();
+      window.removeEventListener('scroll', this._handleScroll);
+    }
+  }, {
+    key: '_handleScroll',
+    value: function _handleScroll() {
+      this._newPageCheck();
+    }
+  }, {
+    key: '_newPage',
+    value: function _newPage() {
+      if ($(window).scrollTop() + $(window).height() > $(document).height() - 200) {
+        this.setState({ counter: this.state.counter + 1 });
+        _image_actions2.default.fetchImages({ query: "", counter: this.state.counter });
+      }
     }
   }, {
     key: '_handleImages',
@@ -8362,7 +8380,7 @@ var ImageContainer = function (_React$Component) {
     key: 'render',
     value: function render() {
       var images = this.state.images || [];
-
+      console.log(images);
       return _react2.default.createElement(
         'div',
         { className: 'image-container dark-blue' },
@@ -8370,7 +8388,9 @@ var ImageContainer = function (_React$Component) {
           return _react2.default.createElement(_image2.default, {
             key: image.id,
             urlDefault: image.urlDefault,
-            title: image.title });
+            title: image.title,
+            origWidth: image.o_width,
+            origHeight: image.o_height });
         })
       );
     }
@@ -12653,20 +12673,33 @@ var Image = function (_React$Component) {
     value: function componentDidMount() {
       $(document).ready(function () {
         $("img.lazy").lazyload({
-          threshold: 100,
-          effect: "fadeIn"
+          threshold: 100
         });
       });
     }
   }, {
     key: "render",
     value: function render() {
+      var width = void 0;
+      var height = void 0;
+      var styleContainer = void 0;
+
+      if (this.props.origWidth / this.props.origHeight > 1) {
+        width = 500;
+        height = this.props.origHeight / this.props.origWidth * width;
+      } else {
+        height = 500;
+        width = this.props.origWidth / this.props.origHeight * height;
+      }
+
+      // styleContainer = {paddingBottom: `${height}`/`${width}` * 100 + "%"}
+
       return React.createElement(
         "div",
-        { className: "image-item" },
+        { className: "image-item", style: styleContainer },
         React.createElement("img", { "data-original": this.props.urlDefault,
-          src: "https://res.cloudinary.com/deeucxgdi/image/upload/c_scale,w_500/v1486541636/placeholder_pdvmma.jpg",
-          className: "lazy" }),
+          className: "lazy"
+        }),
         React.createElement(
           "div",
           { className: "image-title" },
@@ -12772,7 +12805,7 @@ ImageStore.__onDispatch = function (payload) {
 };
 
 function resetImages(images) {
-  _images = {};
+  // _images = {};
 
   images["images"].forEach(function (image) {
     image.urlDefault = 'https://farm' + image.farm + '.staticflickr.com/' + image.server + '/' + image.id + '_' + image.secret + '.jpg';

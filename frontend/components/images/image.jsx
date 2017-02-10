@@ -5,19 +5,32 @@ class Image extends React.Component {
   componentDidMount() {
     $(document).ready(function () {
         $("img.lazy").lazyload({
-          threshold: 100,
-          effect: "fadeIn"
+          threshold: 100
         });
     });
   }
 
   render() {
+    let width;
+    let height;
+    let styleContainer;
+
+    if (this.props.origWidth/this.props.origHeight > 1) {
+      width = 500;
+      height = (this.props.origHeight/this.props.origWidth) * width
+    } else {
+      height = 500;
+      width = (this.props.origWidth/this.props.origHeight) * height
+    }
+
+    // styleContainer = {paddingBottom: `${height}`/`${width}` * 100 + "%"}
+
     return(
-      <div className="image-item">
+      <div className="image-item" style={styleContainer}>
         <img data-original={this.props.urlDefault}
-             src="https://res.cloudinary.com/deeucxgdi/image/upload/c_scale,w_500/v1486541636/placeholder_pdvmma.jpg"
-             className="lazy" />
-        <div className="image-title">{this.props.title}</div>
+             className="lazy"
+            />
+          <div className="image-title">{this.props.title}</div>
       </div>
     );
   }

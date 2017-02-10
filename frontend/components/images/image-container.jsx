@@ -9,17 +9,33 @@ class ImageContainer extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = {images: []}
+    this.state = {images: [], counter: 1, flag: false}
     this._handleImages = this._handleImages.bind(this);
+    this._handleScroll = this._handleScroll.bind(this);
+    this._newPage = this._newPage.bind(this);
+    this._newPageCheck = _.throttle(this._newPage.bind(this), 1000, {trailing: true});
   }
 
   componentDidMount() {
     this.imageListener = ImageStore.addListener(this._handleImages);
-    ImageActions.fetchImages({query: ""});
+    ImageActions.fetchImages({query: "", counter: this.state.counter});
+    window.addEventListener('scroll', this._handleScroll);
   }
 
   componentWillUnmount() {
-    this.friendListener.remove();
+    this.imageListener.remove();
+    window.removeEventListener('scroll', this._handleScroll);
+  }
+
+  _handleScroll() {
+    this._newPageCheck();
+  }
+
+  _newPage() {
+    if ($(window).scrollTop() + $(window).height() > $(document).height() - 200) {
+      this.setState({counter: this.state.counter + 1})
+      ImageActions.fetchImages({query: "", counter: this.state.counter});
+    }
   }
 
   _handleImages() {
@@ -28,15 +44,17 @@ class ImageContainer extends React.Component {
 
   render() {
     let images = this.state.images || []
-
+    console.log(images);
     return (
       <div className="image-container dark-blue">
         {images.map((image) => {
           return (
-            <Image
-              key={image.id}
-              urlDefault={image.urlDefault}
-              title={image.title}/>
+              <Image
+                key={image.id}
+                urlDefault={image.urlDefault}
+                title={image.title}
+                origWidth={image.o_width}
+                origHeight={image.o_height} />
           )
         })
       }
