@@ -5501,10 +5501,11 @@ module.exports = {
 
     _image_api_util2.default.fetchImages(data, this.receiveImages);
   },
-  receiveImages: function receiveImages(images) {
+  receiveImages: function receiveImages(resp) {
     _dispatcher2.default.dispatch({
       actionType: _image_constants2.default.IMAGES_FETCHED,
-      images: images
+      images: { images: resp.images },
+      query: resp.query
     });
   }
 };
@@ -8337,7 +8338,7 @@ var ImageContainer = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (ImageContainer.__proto__ || Object.getPrototypeOf(ImageContainer)).call(this, props));
 
-    _this.state = { images: [], counter: 1, flag: false };
+    _this.state = { images: [], counter: 1, flag: false, currentTab: _this.props.tab };
     _this._handleImages = _this._handleImages.bind(_this);
     _this._handleScroll = _this._handleScroll.bind(_this);
     _this._newPage = _this._newPage.bind(_this);
@@ -8349,7 +8350,7 @@ var ImageContainer = function (_React$Component) {
     key: 'componentDidMount',
     value: function componentDidMount() {
       this.imageListener = _image_store2.default.addListener(this._handleImages);
-      _image_actions2.default.fetchImages({ query: "", counter: this.state.counter });
+      _image_actions2.default.fetchImages({ query: this.state.currentTab, counter: this.state.counter });
       window.addEventListener('scroll', this._handleScroll);
     }
   }, {
@@ -8357,6 +8358,11 @@ var ImageContainer = function (_React$Component) {
     value: function componentWillUnmount() {
       this.imageListener.remove();
       window.removeEventListener('scroll', this._handleScroll);
+    }
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      this.setState({ currentTab: nextProps.tab });
     }
   }, {
     key: '_handleScroll',
@@ -8368,13 +8374,19 @@ var ImageContainer = function (_React$Component) {
     value: function _newPage() {
       if ($(window).scrollTop() + $(window).height() > $(document).height() - 200) {
         this.setState({ counter: this.state.counter + 1 });
-        _image_actions2.default.fetchImages({ query: "", counter: this.state.counter });
+        var searchParam = this.state.currentTab === "All" ? "" : this.state.currentTab;
+        _image_actions2.default.fetchImages({ query: searchParam, counter: this.state.counter });
       }
     }
   }, {
     key: '_handleImages',
     value: function _handleImages() {
       this.setState({ images: _image_store2.default.allImages() });
+    }
+  }, {
+    key: 'currentTab',
+    value: function currentTab(tab) {
+      this.setState({ currentTab: tab });
     }
   }, {
     key: 'render',
@@ -12367,6 +12379,10 @@ var _image_actions = __webpack_require__(43);
 
 var _image_actions2 = _interopRequireDefault(_image_actions);
 
+var _imageContainer = __webpack_require__(72);
+
+var _imageContainer2 = _interopRequireDefault(_imageContainer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -12383,7 +12399,7 @@ var Header = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
 
-    _this.state = { show: false };
+    _this.state = { show: false, currentTab: "" };
     _this._handleClick = _this._handleClick.bind(_this);
     _this._handleToggle = _this._handleToggle.bind(_this);
     return _this;
@@ -12392,11 +12408,17 @@ var Header = function (_React$Component) {
   _createClass(Header, [{
     key: '_handleClick',
     value: function _handleClick(e) {
-      this.setState({ show: false });
-      var color = e.target.className.split(" ")[1];
-      document.getElementsByClassName("image-container")[0].className = "image-container " + ('' + color);
-      var searchParam = e.target.innerHTML === "All" ? "" : e.target.innerHTML;
-      _image_actions2.default.fetchImages({ query: searchParam });
+      if (this.state.currentTab === e.target.innerHTML) {
+        return;
+      } else {
+        this.setState({ show: false });
+        var color = e.target.className.split(" ")[1];
+        document.getElementsByClassName("image-container")[0].className = "image-container " + ('' + color);
+        var searchParam = e.target.innerHTML === "All" ? "" : e.target.innerHTML;
+        this.setState({ currentTab: e.target.innerHTML });
+        this.props.handleTab(e.target.innerHTML);
+        _image_actions2.default.fetchImages({ query: searchParam });
+      }
     }
   }, {
     key: '_handleToggle',
@@ -12526,10 +12548,12 @@ var Main = function (_React$Component) {
   _createClass(Main, [{
     key: 'render',
     value: function render() {
+      console.log("hello");
+      console.log(this.props.tab);
       return _react2.default.createElement(
         'div',
         { className: 'main' },
-        _react2.default.createElement(_imageContainer2.default, null)
+        _react2.default.createElement(_imageContainer2.default, { tab: this.props.tab })
       );
     }
   }]);
@@ -12792,19 +12816,24 @@ var _image_actions2 = _interopRequireDefault(_image_actions);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var _images = {};
+var _query = "";
 
 var ImageStore = new _utils.Store(_dispatcher2.default);
 
 ImageStore.__onDispatch = function (payload) {
   switch (payload.actionType) {
     case _image_constants2.default.IMAGES_FETCHED:
-      resetImages(payload.images);
+      if (_query !== payload.query) {
+        _query = payload.query;
+        ImageStore.resetImages();
+      }
+      addImages(payload.images);
       ImageStore.__emitChange();
       break;
   }
 };
 
-function resetImages(images) {
+function addImages(images) {
   // _images = {};
 
   images["images"].forEach(function (image) {
@@ -12818,6 +12847,10 @@ ImageStore.allImages = function () {
   return Object.keys(_images).map(function (id) {
     return _images[id];
   });
+};
+
+ImageStore.resetImages = function () {
+  _images = {};
 };
 
 module.exports = ImageStore;
@@ -28669,20 +28702,30 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var App = function (_React$Component) {
   _inherits(App, _React$Component);
 
-  function App() {
+  function App(props) {
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+
+    _this.state = { currentTab: "" };
+    _this._handleTab = _this._handleTab.bind(_this);
+    return _this;
   }
 
   _createClass(App, [{
+    key: '_handleTab',
+    value: function _handleTab(tab) {
+      console.log(tab);
+      this.setState({ currentTab: tab });
+    }
+  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
         'div',
         null,
-        _react2.default.createElement(_header2.default, null),
-        this.props.children
+        _react2.default.createElement(_header2.default, { handleTab: this._handleTab }),
+        _react2.default.cloneElement(this.props.children, { tab: this.state.currentTab })
       );
     }
   }]);

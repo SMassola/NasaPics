@@ -4,19 +4,24 @@ import ImageConstants from '../constants/image_constants';
 import ImageActions from '../actions/image_actions';
 
 let _images = {};
+let _query = "";
 
 const ImageStore = new Store(AppDispatcher);
 
 ImageStore.__onDispatch = function(payload) {
   switch (payload.actionType) {
     case ImageConstants.IMAGES_FETCHED:
-      resetImages(payload.images);
+      if (_query !== payload.query) {
+        _query = payload.query
+        ImageStore.resetImages();
+      }
+      addImages(payload.images);
       ImageStore.__emitChange();
       break;
   }
 };
 
-function resetImages(images) {
+function addImages(images) {
   // _images = {};
 
   images["images"].forEach((image) => {
@@ -30,6 +35,10 @@ ImageStore.allImages = function() {
   return Object.keys(_images).map(id => {
     return _images[id];
   })
+}
+
+ImageStore.resetImages = function() {
+  _images = {};
 }
 
 module.exports = ImageStore;

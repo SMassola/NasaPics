@@ -6,11 +6,23 @@ import Main from './main/main';
 import Header from './header/header';
 
 class App extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {currentTab: ""};
+    this._handleTab = this._handleTab.bind(this);
+  }
+
+  _handleTab(tab) {
+    console.log(tab);
+    this.setState({currentTab: tab});
+  }
+
   render() {
     return (
       <div>
-        <Header />
-        {this.props.children}
+        <Header handleTab={this._handleTab} />
+        {React.cloneElement(this.props.children, {tab: this.state.currentTab})}
       </div>
     );
   }

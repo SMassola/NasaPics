@@ -7,10 +7,11 @@ module.exports = {
     ImageApiUtil.fetchImages(data, this.receiveImages)
   },
 
-  receiveImages(images) {
+  receiveImages(resp) {
     AppDispatcher.dispatch({
       actionType: ImageConstants.IMAGES_FETCHED,
-      images: images
+      images: {images: resp.images},
+      query: resp.query
     })
   }
 }
