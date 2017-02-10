@@ -14,7 +14,6 @@ class App extends React.Component {
   }
 
   _handleTab(tab) {
-    console.log(tab);
     this.setState({currentTab: tab});
   }
 

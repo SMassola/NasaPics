@@ -8392,7 +8392,7 @@ var ImageContainer = function (_React$Component) {
     key: 'render',
     value: function render() {
       var images = this.state.images || [];
-      console.log(images);
+
       return _react2.default.createElement(
         'div',
         { className: 'image-container dark-blue' },
@@ -12399,9 +12399,11 @@ var Header = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (Header.__proto__ || Object.getPrototypeOf(Header)).call(this, props));
 
-    _this.state = { show: false, currentTab: "" };
+    _this.state = { show: false, currentTab: "All" };
     _this._handleClick = _this._handleClick.bind(_this);
     _this._handleToggle = _this._handleToggle.bind(_this);
+    _this._handleEnter = _this._handleEnter.bind(_this);
+    _this._handleLeave = _this._handleLeave.bind(_this);
     return _this;
   }
 
@@ -12411,13 +12413,26 @@ var Header = function (_React$Component) {
       if (this.state.currentTab === e.target.innerHTML) {
         return;
       } else {
+        $('.filter').removeClass("teal");
+        $(e.target).addClass("teal");
         this.setState({ show: false });
         var color = e.target.className.split(" ")[1];
-        document.getElementsByClassName("image-container")[0].className = "image-container " + ('' + color);
         var searchParam = e.target.innerHTML === "All" ? "" : e.target.innerHTML;
         this.setState({ currentTab: e.target.innerHTML });
         this.props.handleTab(e.target.innerHTML);
         _image_actions2.default.fetchImages({ query: searchParam });
+      }
+    }
+  }, {
+    key: '_handleEnter',
+    value: function _handleEnter(e) {
+      $(e.target).addClass("teal");
+    }
+  }, {
+    key: '_handleLeave',
+    value: function _handleLeave(e) {
+      if (this.state.currentTab !== e.target.innerHTML) {
+        $(e.target).removeClass("teal");
       }
     }
   }, {
@@ -12444,22 +12459,38 @@ var Header = function (_React$Component) {
             { className: 'filters-container' },
             _react2.default.createElement(
               'div',
-              { onClick: this._handleClick, className: 'filter dark-blue' },
+              {
+                onClick: this._handleClick,
+                onMouseLeave: this._handleLeave,
+                onMouseEnter: this._handleEnter,
+                className: 'filter teal' },
               'All'
             ),
             _react2.default.createElement(
               'div',
-              { onClick: this._handleClick, className: 'filter light-blue' },
+              {
+                onClick: this._handleClick,
+                onMouseLeave: this._handleLeave,
+                onMouseEnter: this._handleEnter,
+                className: 'filter' },
               'Space'
             ),
             _react2.default.createElement(
               'div',
-              { onClick: this._handleClick, className: 'filter teal' },
+              {
+                onClick: this._handleClick,
+                onMouseLeave: this._handleLeave,
+                onMouseEnter: this._handleEnter,
+                className: 'filter' },
               'Hubble'
             ),
             _react2.default.createElement(
               'div',
-              { onClick: this._handleClick, className: 'filter red' },
+              {
+                onClick: this._handleClick,
+                onMouseLeave: this._handleLeave,
+                onMouseEnter: this._handleEnter,
+                className: 'filter' },
               'NASA'
             )
           ),
@@ -12473,22 +12504,38 @@ var Header = function (_React$Component) {
               { className: 'dropdown-content' },
               _react2.default.createElement(
                 'div',
-                { onClick: this._handleClick, className: 'filter dark-blue' },
+                {
+                  onClick: this._handleClick,
+                  onMouseLeave: this._handleLeave,
+                  onMouseEnter: this._handleEnter,
+                  className: 'filter teal' },
                 'All'
               ),
               _react2.default.createElement(
                 'div',
-                { onClick: this._handleClick, className: 'filter light-blue' },
+                {
+                  onClick: this._handleClick,
+                  onMouseLeave: this._handleLeave,
+                  onMouseEnter: this._handleEnter,
+                  className: 'filter' },
                 'Space'
               ),
               _react2.default.createElement(
                 'div',
-                { onClick: this._handleClick, className: 'filter teal' },
+                {
+                  onClick: this._handleClick,
+                  onMouseLeave: this._handleLeave,
+                  onMouseEnter: this._handleEnter,
+                  className: 'filter' },
                 'Hubble'
               ),
               _react2.default.createElement(
                 'div',
-                { onClick: this._handleClick, className: 'filter red' },
+                {
+                  onClick: this._handleClick,
+                  onMouseLeave: this._handleLeave,
+                  onMouseEnter: this._handleEnter,
+                  className: 'filter' },
                 'NASA'
               )
             ) : ""
@@ -12548,8 +12595,6 @@ var Main = function (_React$Component) {
   _createClass(Main, [{
     key: 'render',
     value: function render() {
-      console.log("hello");
-      console.log(this.props.tab);
       return _react2.default.createElement(
         'div',
         { className: 'main' },
@@ -28715,7 +28760,6 @@ var App = function (_React$Component) {
   _createClass(App, [{
     key: '_handleTab',
     value: function _handleTab(tab) {
-      console.log(tab);
       this.setState({ currentTab: tab });
     }
   }, {

@@ -53,7 +53,7 @@ class ImageContainer extends React.Component {
 
   render() {
     let images = this.state.images || []
-    console.log(images);
+    
     return (
       <div className="image-container dark-blue">
         {images.map((image) => {

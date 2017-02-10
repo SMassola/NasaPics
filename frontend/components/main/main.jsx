@@ -10,8 +10,6 @@ class Main extends React.Component {
   }
 
   render() {
-    console.log("hello");
-    console.log(this.props.tab);
     return (
       <div className="main">
         <ImageContainer tab={this.props.tab}/>
